@@ -98,10 +98,10 @@ bash scripts/02_download_models.sh # checkpoint + CLIP warm-up
 bash scripts/03_run_gradio.sh      # launch Gradio
 ```
 
-Quick path (RunPod — reuse image Python/torch):
+Quick path (RunPod — use conda `xpose` / Python 3.11; base is often py3.14 without torch):
 
 ```sh
-export XPOSE_USE_BASE_ENV=1
+unset XPOSE_USE_BASE_ENV
 chmod +x scripts/*.sh
 bash scripts/01_setup_env.sh
 bash scripts/02_download_models.sh

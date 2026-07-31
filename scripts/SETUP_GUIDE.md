@@ -22,45 +22,45 @@ Stack:
 ## A. RunPod (recommended while lab is unavailable)
 
 Template: `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`  
-GPU example: **RTX A4500**
+GPU example: **RTX A4500** (`sm_86`)
+
+**Important:** On current pods, conda `base` is often **Python 3.14** with **no torch**.  
+`torch==2.8.0` has **no** wheels for 3.14 (cu128 only lists 2.9+). Prefer the conda env `xpose` with **Python 3.11**.
 
 ```bash
 cd /workspace/X-Pose   # or your clone path
 chmod +x scripts/*.sh
 mkdir -p /backup/data/art-gen
 
-# Reuse the image Python + preinstalled torch 2.8/cu128 (skips huge re-download)
-export XPOSE_USE_BASE_ENV=1
-bash scripts/01_setup_env.sh
+# Do NOT use base py3.14 — leave XPOSE_USE_BASE_ENV unset
+unset XPOSE_USE_BASE_ENV
+bash scripts/01_setup_env.sh       # creates/uses conda env xpose (py3.11); accept prompts
 bash scripts/02_download_models.sh
 bash scripts/03_run_gradio.sh
 ```
 
-What changes vs lab:
+If you still export `XPOSE_USE_BASE_ENV=1` on py3.14, the script **auto-falls back** to conda `xpose` (py3.11) and installs `torch==2.8.0+cu128`.
 
-- No conda env create; installs project deps into the image Python.
-- Skips torch reinstall if `torch 2.8.x` + CUDA already works.
+What the setup does on RunPod:
+
+- Uses conda env `xpose` / Python 3.11 (unless base is 3.10–3.12 with working torch).
+- Installs torch 2.8 + torchvision 0.23 from cu128 (or skips if already OK).
 - Auto-sets `TORCH_CUDA_ARCH_LIST` from the GPU (A4500 → `8.6`).
 
-If you already created a conda env `xpose` and hit the old Pillow conflict, either:
+If you already have env `xpose` from an earlier attempt:
 
 ```bash
-# Option 1: stay on conda env, just re-run after pulling this fix
-conda activate xpose
-bash scripts/01_setup_env.sh
-
-# Option 2: switch to base image Python (faster on RunPod)
-export XPOSE_USE_BASE_ENV=1
-bash scripts/01_setup_env.sh
+unset XPOSE_USE_BASE_ENV
+bash scripts/01_setup_env.sh   # reuse xpose; skip torch if OK; fix Pillow via requirements
 ```
 
 Force a clean torch reinstall (only if needed):
 
 ```bash
-FORCE_TORCH_REINSTALL=1 XPOSE_USE_BASE_ENV=1 bash scripts/01_setup_env.sh
+FORCE_TORCH_REINSTALL=1 bash scripts/01_setup_env.sh
 ```
 
-Expose Gradio: use the share URL printed by `app.py`, or map the pod HTTP port if you set `server_name`/`server_port` yourself.
+Expose Gradio: use the share URL printed by `app.py`, or map the pod HTTP port.
 
 ---
 
@@ -163,7 +163,8 @@ Config path in this repo is `config_model/UniPose_SwinT.py` (not `config/`).
 |--------|-----|
 | `Pillow==11.1.0` vs `gradio ... pillow<11.0` | Pull latest `requirements.txt` (`Pillow==10.4.0`) and re-run setup. |
 | `ResolutionImpossible` / dependency conflict | Use updated `requirements.txt`; avoid manually pinning Pillow ≥11 with Gradio 4.44.1. |
-| Re-downloading multi‑GB nvidia-* wheels on RunPod | Use `XPOSE_USE_BASE_ENV=1` so image torch is reused; script skips reinstall when torch 2.8 + CUDA works. |
+| `No matching distribution for torch==2.8.0` on RunPod | conda `base` is Python 3.14. Unset `XPOSE_USE_BASE_ENV` and use conda env `xpose` (py3.11). |
+| Re-downloading multi‑GB nvidia-* wheels | Script skips reinstall when torch ≥2.8 + CUDA already works in the active env. |
 | `CUDA capability sm_120 is not compatible` | Need PyTorch ≥2.7 **cu128**. Reinstall with `FORCE_TORCH_REINSTALL=1`. |
 | Ops build fails / wrong arch | Script auto-detects GPU arch. Override with `TORCH_CUDA_ARCH_LIST=8.6` (A4500) or `12.0` (5090). Clean `models/UniPose/ops/build` and rebuild. |
 | `nvcc: command not found` | Install toolkit / `cuda-nvcc=12.8`, or set `CUDA_HOME` (RunPod often `/usr/local/cuda`). |
@@ -177,9 +178,9 @@ Config path in this repo is `config_model/UniPose_SwinT.py` (not `config/`).
 **RunPod**
 
 ```bash
-export XPOSE_USE_BASE_ENV=1
+unset XPOSE_USE_BASE_ENV
 chmod +x scripts/*.sh
-bash scripts/01_setup_env.sh
+bash scripts/01_setup_env.sh      # conda xpose / py3.11 (accept prompts)
 bash scripts/02_download_models.sh
 bash scripts/03_run_gradio.sh
 ```
