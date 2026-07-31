@@ -208,7 +208,11 @@ cd "${OPS_DIR}"
 python setup.py build install
 
 echo ""
-echo "Running ops unit test (expect all checks True)..."
+echo "Running ops unit test (forward + small-channel gradcheck)..."
+echo "Note: large D=1025+ double gradcheck is skipped by default (VRAM-heavy on A4500)."
+# Avoid fragmenting VRAM before tests; large gradcheck opt-in via MSDA_TEST_LARGE_GRAD=1
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+python -c "import torch; torch.cuda.empty_cache()" 2>/dev/null || true
 python test.py
 cd "${REPO_ROOT}"
 

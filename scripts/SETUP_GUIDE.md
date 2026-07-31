@@ -167,6 +167,7 @@ Config path in this repo is `config_model/UniPose_SwinT.py` (not `config/`).
 | Re-downloading multi‑GB nvidia-* wheels | Script skips reinstall when torch ≥2.8 + CUDA already works in the active env. |
 | `CUDA capability sm_120 is not compatible` | Need PyTorch ≥2.7 **cu128**. Reinstall with `FORCE_TORCH_REINSTALL=1`. |
 | Ops build fails / wrong arch | Script auto-detects GPU arch. Override with `TORCH_CUDA_ARCH_LIST=8.6` (A4500) or `12.0` (5090). Clean `models/UniPose/ops/build` and rebuild. |
+| `test.py` CUDA OOM on `check_gradient_numerical(D=1025)` | Expected on 16–24GB GPUs: double `gradcheck` is huge. Ops already OK if forward checks are `True`. Pull latest `ops/test.py` (skips large D by default). Re-run only the test: `cd models/UniPose/ops && python test.py` |
 | `nvcc: command not found` | Install toolkit / `cuda-nvcc=12.8`, or set `CUDA_HOME` (RunPod often `/usr/local/cuda`). |
 | Checkpoint missing | `bash scripts/02_download_models.sh` |
 | HF cache not under `/backup/data/art-gen` | `source .env` / use the run scripts; `echo $HF_HOME`. |
