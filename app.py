@@ -1,7 +1,5 @@
 import argparse
 import os
-os.system("pip install ftfy regex tqdm")
-os.system("pip install git+https://github.com/openai/CLIP.git")
 import sys
 import io
 import gradio as gr
@@ -244,7 +242,7 @@ def load_model(model_config_path, model_checkpoint_path, cpu_only=False):
     args = Config.fromfile(model_config_path)
     args.device = "cuda" if not cpu_only else "cpu"
     model = build_model(args)
-    checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
+    checkpoint = torch.load(model_checkpoint_path, map_location="cpu", weights_only=False)
     load_res = model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
     print(load_res)
     _ = model.eval()
@@ -354,7 +352,7 @@ checkpoint_path = "./unipose_swint.pth"  # change the path of the model
 model = load_model(config_file, checkpoint_path, cpu_only=False)
 
 if __name__ == "__main__":
-MARKDOWN = \
+    MARKDOWN = \
 """
 ## UniPose: Detecting Any Keypoints
 
@@ -366,10 +364,10 @@ If UniPose is helpful for you, please help star the GitHub Repo. Thanks!
     with block:
         with gr.Row():
             with gr.Column():
-                input_image = gr.Image(source='upload', type="pil")
+                input_image = gr.Image(type="pil")
                 instance_prompt = gr.Textbox(label="Instance Prompt")
                 keypoint_example = gr.Textbox(label="Keypoint Example",info="Support predefined keypoints: 1) Articulated Objects: person, face, hand, animal_in_AnimalKindom, animal_in_AP10K, animal_face, fly, locust; 2) Rigid Objects: car, table, chair, bed, sofa, swivelchair; 3) Soft Objects: short_sleeved_shirt, long_sleeved_outwear, short_sleeved_outwear, sling, vest, long_sleeved_dress, long_sleeved_shirt, trousers, sling_dress, vest_dress, skirt, short_sleeved_dress, shorts")
-                run_button = gr.Button(label="Run")
+                run_button = gr.Button("Run")
                 with gr.Accordion("Advanced options", open=False):
                     box_threshold = gr.Slider(
                         label="Box Threshold", minimum=0.0, maximum=1.0, value=0.1, step=0.001
@@ -379,10 +377,7 @@ If UniPose is helpful for you, please help star the GitHub Repo. Thanks!
                     )
 
             with gr.Column():
-                gallery = gr.outputs.Image(
-                    type="pil",
-
-                ).style(full_width=True, full_height=True)
+                gallery = gr.Image(type="pil")
 
         run_button.click(fn=run_unipose, inputs=[
                         input_image, instance_prompt, keypoint_example,box_threshold,IoU_threshold], outputs=[gallery])

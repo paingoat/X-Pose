@@ -83,20 +83,40 @@ X-Pose has strong fine-grained localization and generalization abilities across 
 
 
 
-## 🔨 Environment Setup 
+## 🔨 Environment Setup
+
+For **RTX 5090 / Ubuntu lab** (PyTorch 2.8 + CUDA 12.8), follow the end-to-end scripts guide:
+
+→ **[scripts/SETUP_GUIDE.md](scripts/SETUP_GUIDE.md)**
+
+Quick path:
+
+```sh
+chmod +x scripts/*.sh
+bash scripts/01_setup_env.sh       # conda env + cu128 torch + build CUDA ops (no conda -y)
+bash scripts/02_download_models.sh # checkpoint + CLIP warm-up
+bash scripts/03_run_gradio.sh      # launch Gradio
+```
+
+HF cache is set in `.env` (`HF_HOME=/backup/data/art-gen`).
+
+Legacy manual install (older GPUs / reference):
+
    1. Clone this repo
    ```sh
    git clone https://github.com/IDEA-Rensearch/X-Pose.git
    cd X-Pose
    ```
 
-   2. Install the needed packages
+   2. Install PyTorch cu128 first, then the rest
    ```sh
+   pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu128
    pip install -r requirements.txt
    ```
 
    3. Compiling CUDA operators
    ```sh
+   export TORCH_CUDA_ARCH_LIST="12.0"
    cd models/UniPose/ops
    python setup.py build install
    # unit test (should see all checking is True)
@@ -119,7 +139,7 @@ X-Pose has strong fine-grained localization and generalization abilities across 
 Replace `{GPU ID}`, `image_you_want_to_test.jpg`, and `"dir you want to save the output"` with appropriate values in the following command
 ```bash
 CUDA_VISIBLE_DEVICES={GPU ID} python inference_on_a_image.py \
--c config/UniPose_SwinT.py \
+-c config_model/UniPose_SwinT.py \
 -p weights/unipose_swint.pth \
 -i image_you_want_to_test.jpg \
 -o "dir you want to save the output" \

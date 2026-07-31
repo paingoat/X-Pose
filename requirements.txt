@@ -1,16 +1,23 @@
+# PyTorch / torchvision are installed separately from the cu128 index
+# (see scripts/01_setup_env.sh):
+#   pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu128
+
 addict==2.4.0
-gradio==4.0.2
-ipdb==0.13.4
-matplotlib==3.5.3
-numpy==1.21.5
-pandas
-Pillow
-PyYAML==6.0.1
-seaborn==0.13.0
-setuptools==63.4.1
-termcolor==1.1.0
-timm==0.9.7
-torch==1.12.1
-torchvision==0.13.1
-transformers==4.22.0
-yapf==0.32.0
+ftfy==6.3.1
+gdown==5.2.0
+gradio==4.44.1
+ipdb==0.13.13
+matplotlib==3.9.4
+numpy>=1.26.4,<2.3
+openai-clip==1.0.1
+pandas==2.2.3
+Pillow==11.1.0
+PyYAML==6.0.2
+regex==2024.11.6
+seaborn==0.13.2
+setuptools==69.5.1
+termcolor==2.5.0
+timm==0.9.16
+tqdm==4.67.1
+transformers==4.46.3
+yapf==0.43.0
