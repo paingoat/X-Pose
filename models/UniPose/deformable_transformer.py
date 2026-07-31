@@ -660,7 +660,8 @@ class TransformerEncoder(nn.Module):
                         output,
                         memory_text,
                         key_padding_mask,
-                        text_attention_mask
+                        text_attention_mask,
+                        use_reentrant=True,
                     )
                 else:
                     output, memory_text = self.fusion_layers[layer_id](v=output, l=memory_text,
@@ -684,7 +685,8 @@ class TransformerEncoder(nn.Module):
                     reference_points,
                     spatial_shapes,
                     level_start_index,
-                    key_padding_mask
+                    key_padding_mask,
+                    use_reentrant=True,
                 )
             else:
                 output = layer(src=output, pos=pos, reference_points=reference_points, spatial_shapes=spatial_shapes,

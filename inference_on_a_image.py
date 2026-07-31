@@ -179,10 +179,12 @@ def plot_on_image(image_pil, tgt, keypoint_skeleton,keypoint_text_prompt,output_
 
     if 'keypoints' in tgt:
 
-        sks = np.array(keypoint_skeleton)
-        # import pdb;pdb.set_trace()
-        if sks !=[]:
-            if sks.min()==1:
+        # NumPy 2.x: `array != []` raises ValueError for non-empty (N,2) skeletons
+        if keypoint_skeleton is None or len(keypoint_skeleton) == 0:
+            sks = np.zeros((0, 2), dtype=np.int64)
+        else:
+            sks = np.asarray(keypoint_skeleton, dtype=np.int64)
+            if sks.size > 0 and sks.min() == 1:
                 sks = sks - 1
 
         for idx, ann in enumerate(tgt['keypoints']):
