@@ -6,6 +6,11 @@ addict==2.4.0
 ftfy==6.3.1
 gdown==5.2.0
 gradio==4.44.1
+gradio-client==1.3.0
+# Pin FastAPI/Pydantic with Gradio 4.44 to avoid JSON-schema bool nodes that crash
+# gradio_client.get_api_info() (TypeError: argument of type 'bool' is not iterable).
+fastapi>=0.112.2,<0.116
+pydantic>=2.10.0,<2.11
 # gradio 4.44.1 requires pillow>=8.0,<11.0
 Pillow==10.4.0
 # keep hub <1.0 for transformers 4.46.x compatibility (gradio may otherwise pull hub 1.x)
@@ -19,8 +24,10 @@ PyYAML==6.0.2
 regex==2024.11.6
 seaborn==0.13.2
 setuptools==69.5.1
+starlette>=0.37.2,<0.41
 termcolor==2.5.0
 timm==0.9.16
 tqdm==4.67.1
 transformers==4.46.3
+uvicorn>=0.30.0,<0.33
 yapf==0.43.0

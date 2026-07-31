@@ -24,7 +24,8 @@ fi
 HF_HOME="${HF_HOME:-/backup/data/art-gen}"
 export HF_HOME
 export HUGGINGFACE_HUB_CACHE="${HUGGINGFACE_HUB_CACHE:-${HF_HOME}}"
-export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-${HF_HOME}}"
+# Prefer HF_HOME only (TRANSFORMERS_CACHE is deprecated in transformers v5)
+unset TRANSFORMERS_CACHE || true
 mkdir -p "${HF_HOME}"
 
 if [[ "${XPOSE_USE_BASE_ENV}" == "1" ]]; then

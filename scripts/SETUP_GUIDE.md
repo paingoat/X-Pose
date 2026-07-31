@@ -171,6 +171,8 @@ Config path in this repo is `config_model/UniPose_SwinT.py` (not `config/`).
 | `nvcc: command not found` | Install toolkit / `cuda-nvcc=12.8`, or set `CUDA_HOME` (RunPod often `/usr/local/cuda`). |
 | Checkpoint missing | `bash scripts/02_download_models.sh` |
 | HF cache not under `/backup/data/art-gen` | `source .env` / use the run scripts; `echo $HF_HOME`. |
+| `TypeError: argument of type 'bool' is not iterable` (`gradio_client`) | Gradio 4.44 + new pydantic/fastapi JSON-schema bug. Sync `util/gradio_compat.py` + `app.py`, then `pip install -r requirements.txt` and restart `03_run_gradio.sh`. |
+| `_IncompatibleKeys` with many `clip_model.*` missing | Expected. UniPose checkpoint does not store CLIP weights; CLIP is loaded via `clip.load("ViT-B/32")`. |
 
 ---
 

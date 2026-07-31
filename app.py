@@ -13,6 +13,10 @@ from predefined_keypoints import *
 from util import box_ops
 from util.config import Config
 from util.utils import clean_state_dict
+from util.gradio_compat import patch_gradio_client_schema_bool
+
+# Gradio 4.44 + newer pydantic/fastapi: fix API-schema crash on page load
+patch_gradio_client_schema_bool()
 
 import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection
@@ -383,5 +387,6 @@ If UniPose is helpful for you, please help star the GitHub Repo. Thanks!
                         input_image, instance_prompt, keypoint_example,box_threshold,IoU_threshold], outputs=[gallery])
 
 
-    block.launch(share=True)
+    # share=True for public link; 0.0.0.0 so RunPod/port-forward can reach the UI
+    block.launch(share=True, server_name="0.0.0.0", server_port=7860)
 
