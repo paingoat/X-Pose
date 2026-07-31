@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Download UniPose Swin-T checkpoint and optionally warm CLIP cache.
+# Optional: XPOSE_USE_BASE_ENV=1 to skip conda activate (RunPod base Python).
 set -euo pipefail
 
 ENV_NAME="xpose"
+XPOSE_USE_BASE_ENV="${XPOSE_USE_BASE_ENV:-0}"
 GDRIVE_FILE_ID="13gANvGWyWApMFTAtC3ntrMgx0fOocjIa"
 CHECKPOINT_NAME="unipose_swint.pth"
 
@@ -27,7 +29,9 @@ export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-${HF_HOME}}"
 mkdir -p "${HF_HOME}"
 mkdir -p "${REPO_ROOT}/weights"
 
-if command -v conda >/dev/null 2>&1; then
+if [[ "${XPOSE_USE_BASE_ENV}" == "1" ]]; then
+  echo "XPOSE_USE_BASE_ENV=1 → using current Python: $(which python)"
+elif command -v conda >/dev/null 2>&1; then
   eval "$(conda shell.bash hook)"
   if conda env list | awk '{print $1}' | grep -qx "${ENV_NAME}"; then
     conda activate "${ENV_NAME}"

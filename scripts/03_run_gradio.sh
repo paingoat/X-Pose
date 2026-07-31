@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Launch the UniPose Gradio demo with lab HF cache settings.
+# Launch the UniPose Gradio demo with HF cache settings.
+# Optional: XPOSE_USE_BASE_ENV=1 to skip conda activate (RunPod base Python).
 set -euo pipefail
 
 ENV_NAME="xpose"
+XPOSE_USE_BASE_ENV="${XPOSE_USE_BASE_ENV:-0}"
 CHECKPOINT_NAME="unipose_swint.pth"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,13 +27,17 @@ export HUGGINGFACE_HUB_CACHE="${HUGGINGFACE_HUB_CACHE:-${HF_HOME}}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-${HF_HOME}}"
 mkdir -p "${HF_HOME}"
 
-if ! command -v conda >/dev/null 2>&1; then
-  echo "ERROR: conda not found." >&2
-  exit 1
+if [[ "${XPOSE_USE_BASE_ENV}" == "1" ]]; then
+  echo "XPOSE_USE_BASE_ENV=1 → using current Python: $(which python)"
+else
+  if ! command -v conda >/dev/null 2>&1; then
+    echo "ERROR: conda not found. On RunPod, re-run with:" >&2
+    echo "  XPOSE_USE_BASE_ENV=1 bash scripts/03_run_gradio.sh" >&2
+    exit 1
+  fi
+  eval "$(conda shell.bash hook)"
+  conda activate "${ENV_NAME}"
 fi
-
-eval "$(conda shell.bash hook)"
-conda activate "${ENV_NAME}"
 
 CKPT="${REPO_ROOT}/${CHECKPOINT_NAME}"
 if [[ ! -f "${CKPT}" ]]; then

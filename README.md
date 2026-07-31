@@ -85,17 +85,27 @@ X-Pose has strong fine-grained localization and generalization abilities across 
 
 ## 🔨 Environment Setup
 
-For **RTX 5090 / Ubuntu lab** (PyTorch 2.8 + CUDA 12.8), follow the end-to-end scripts guide:
+For **RTX 5090 / Ubuntu lab** or **RunPod** (`runpod/pytorch:…-torch280` + A4500), follow:
 
 → **[scripts/SETUP_GUIDE.md](scripts/SETUP_GUIDE.md)**
 
-Quick path:
+Quick path (lab / conda):
 
 ```sh
 chmod +x scripts/*.sh
 bash scripts/01_setup_env.sh       # conda env + cu128 torch + build CUDA ops (no conda -y)
 bash scripts/02_download_models.sh # checkpoint + CLIP warm-up
 bash scripts/03_run_gradio.sh      # launch Gradio
+```
+
+Quick path (RunPod — reuse image Python/torch):
+
+```sh
+export XPOSE_USE_BASE_ENV=1
+chmod +x scripts/*.sh
+bash scripts/01_setup_env.sh
+bash scripts/02_download_models.sh
+bash scripts/03_run_gradio.sh
 ```
 
 HF cache is set in `.env` (`HF_HOME=/backup/data/art-gen`).
