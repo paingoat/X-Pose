@@ -211,11 +211,11 @@ def plot_on_image(image_pil, tgt, keypoint_skeleton,keypoint_text_prompt):
                 c = (np.random.random((1, 3)) * 0.6 + 0.4).tolist()[0]
 
             for sk in sks:
-                plt.plot(x[sk], y[sk], linewidth=1, color=c)
+                plt.plot(x[sk], y[sk], linewidth=8, color=c)
 
             for i in range(num_kpts):
                 c_kpt = color_kpt[i]
-                plt.plot(x[i], y[i], 'o', markersize=4, markerfacecolor=c_kpt, markeredgecolor='k', markeredgewidth=0.5)
+                plt.plot(x[i], y[i], 'o', markersize=20, markerfacecolor=c_kpt, markeredgecolor='k', markeredgewidth=4)
     ax.set_axis_off()
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
